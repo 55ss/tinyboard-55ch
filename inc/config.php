@@ -1478,6 +1478,8 @@
 	$config['mod']['search_ip'] = MOD;
 	// View the wordfilters page
 	$config['mod']['wordfilters'] = ADMIN;
+	// View the filters page
+	$config['mod']['filters'] = ADMIN;
 
 
 	$config['additional_javascript'] = array();
@@ -1493,3 +1495,4 @@
 
 
 	$config['use_favela_wordfilters'] = true;
+	$config['use_favela_filters'] = true;

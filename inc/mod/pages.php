@@ -271,17 +271,6 @@ function mod_page_menu() {
 	mod_page(_('Dashboard'), 'mod/dashboard_framed.html', $args);
 }
 
-// favela
-function mod_page_search_it() {
-	mod_page(_('Search results'), 'mod/search_results.html', array(
-		'search_type' => '',
-		'search_query' => '',
-		'search_query_escaped' => '',
-		'result_count' => '',
-		'results' => ''
-	));
-}
-
 //favela
 function mod_page_search_ip() {
 	global $config, $mod;
@@ -556,6 +545,17 @@ function mod_search($type, $search_query_escaped, $page_no = 1) {
 }
 
 // favela
+function mod_page_search_it() {
+	mod_page(_('Search results'), 'mod/search_results.html', array(
+		'search_type' => '',
+		'search_query' => '',
+		'search_query_escaped' => '',
+		'result_count' => '',
+		'results' => ''
+	));
+}
+
+// favela
 function mod_page_wordfilters() {
 	global $config, $mod;
 
@@ -635,6 +635,143 @@ function mod_wordfilters_delete($prancha, $id) {
 		cache::delete('wordfilters_preview');
 	
 	header('Location: ?/wordfilters', true, $config['redirect_http']);
+}
+
+//favela
+function mod_page_filters() {
+	global $config, $mod;
+	if (!hasPermission($config['mod']['filters']))
+		error($config['error']['noaccess']);
+
+	$boards = listBoards();
+
+	$filters = array();
+
+	foreach ($boards as $board) {
+		$filters[$board['uri']] = array();
+		$filters_view[$board['uri']] = array();
+		if (is_file($board['uri']."/filt.php")) {
+			$json = file_get_contents($board['uri']."/filt.php");
+			$json = preg_replace('~\<\?php(.*?)\?\>~', '', $json);
+
+			$arr = array();
+			$arr = json_decode($json, true);
+			$filters[$board['uri']] = $arr;
+			/*for ($i=0; $i < count($arr); $i++) { 
+				array_walk_recursive($arr[$i],function(&$value) use (&$filters,$board,$i){
+					$filters[$board['uri']][$i][] = $value;
+				});
+			}*/
+		}
+	}
+	
+
+	if (isset($_POST['action']))
+		if ((!empty($_POST['body']) || !empty($_POST['name']) || !empty($_POST['email']) || !empty($_POST['subject']) || !empty($_POST['filename']) || !empty($_POST['ip'])) && !empty($_POST['check_boards'])) {
+			foreach ($_POST['check_boards'] as $board) {
+				// agora começa a putaria
+				$the_count = count($filters[$board]);
+
+				if (!empty($_POST['name']))
+					$filters[$board][$the_count]['condition']['name'] = $_POST['name'];
+
+				if (!empty($_POST['trip']))
+					$filters[$board][$the_count]['condition']['trip'] = $_POST['trip'];
+
+				if (!empty($_POST['email']))
+					$filters[$board][$the_count]['condition']['email'] = $_POST['email'];
+
+				if (!empty($_POST['subject']))
+					$filters[$board][$the_count]['condition']['subject'] = $_POST['subject'];
+
+				if (!empty($_POST['body']))
+					$filters[$board][$the_count]['condition']['body'] = $_POST['body'];
+
+				if (!empty($_POST['has_file']))
+					$filters[$board][$the_count]['condition']['has_file'] = true;
+
+				if (!empty($_POST['filehash']))
+					$filters[$board][$the_count]['condition']['filehash'] = $_POST['filehash'];
+
+				if (!empty($_POST['filename']))
+					$filters[$board][$the_count]['condition']['filename'] = $_POST['filename'];
+
+				if (!empty($_POST['extension']))
+					$filters[$board][$the_count]['condition']['extension'] = $_POST['extension'];
+
+				if (!empty($_POST['ip']))
+					$filters[$board][$the_count]['condition']['ip'] = $_POST['ip'];
+
+				if (!empty($_POST['OP']))
+					$filters[$board][$the_count]['condition']['OP'] = true;
+
+				if (!empty($_POST['custom']))
+					$filters[$board][$the_count]['condition']['OP'] = $_POST['custom'];
+
+				$filters[$board][$the_count]['action'] = $_POST['action'];
+
+				if ($_POST['action'] == 'reject')
+					if (!empty($_POST['message']))
+						$filters[$board][$the_count]['message'] = $_POST['message'];
+
+				if ($_POST['action'] == 'ban') {
+					if (!empty($_POST['reason']))
+						$filters[$board][$the_count]['reason'] = $_POST['reason'];
+					if (!empty($_POST['expires']))
+						$filters[$board][$the_count]['expires'] = $_POST['expires'];
+					if (!empty($_POST['reject']))
+						$filters[$board][$the_count]['reject'] = true;
+					if (!empty($_POST['message']))
+						$filters[$board][$the_count]['message'] = $_POST['message'];
+					if (!empty($_POST['all_boards']))
+						$filters[$board][$the_count]['all_boards'] = true;
+				}
+
+				dumpFilters($filters[$board], $board);
+			}
+
+			modLog('Created a new filter');
+		}
+
+
+
+	mod_page(_('Filters'), 'mod/filters.html', array(
+		'filters' 	=> $filters,
+		'boards' 		=> $boards,
+		'use_bootstrap'	=> true,
+		'token'			=> make_secure_link_token('filters')));
+}
+
+//favela
+function mod_filters_delete($prancha, $id) {
+	global $config;
+	
+	if (!hasPermission($config['mod']['filters']))
+			error($config['error']['noaccess']);
+	
+	$filters = array();
+
+	$filters[$prancha] = array();
+	if (is_file($prancha."/filt.php")) {
+		$json = file_get_contents($prancha."/filt.php");
+		$json = preg_replace('~\<\?php(.*?)\?\>~', '', $json);
+		$arrm = array();
+		$arrm = json_decode($json);
+
+		unset($arrm[$id]);
+		$arrm = array_values($arrm);
+
+		file_put_contents($prancha.'/filt.php','<?php header("Location: /")?>'.json_encode($arrm));
+	}
+
+	//dumpfilters($filters[$prancha], $prancha);
+
+	modLog('Deleted a filter entry');
+	
+	if ($config['cache']['enabled'])
+		cache::delete('filters_preview');
+	
+	header('Location: ?/filters', true, $config['redirect_http']);
 }
 
 function mod_edit_board($boardName) {

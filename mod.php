@@ -69,7 +69,10 @@ $pages = array(
 	
 	'/wordfilters'				=> 'secure_POST wordfilters',
 	'/wordfilters/delete/(\%b)/(\d+)'	=> 'wordfilters_delete',
-	
+
+	'/filters'				=> 'secure_POST filters',
+	'/filters/delete/(\%b)/(\d+)'	=> 'filters_delete',
+
 	'/search_ip'				=> 'search_ip',		// Search IP
 
 	'/search_it'				=> 'search_it',		// search
