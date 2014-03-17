@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', 'v0.9.6-dev-22');
+define('VERSION', 'v0.9.6-dev-22 + <a href="https://int.vichan.net/devel/">vichan-devel-4.4.95</a> + <a href="http://55ch.org">tinyboard-55ch-0.1</a>');
 
 require 'inc/functions.php';
 
