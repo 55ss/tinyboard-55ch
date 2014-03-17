@@ -1484,6 +1484,7 @@
 
 	$config['additional_javascript'] = array();
 	$config['additional_javascript'][] = 'js/jquery.min.js';
+	$config['additional_javascript'][] = 'js/style-select.js';
 
 
 	// Make stylesheet selections board-specific.
@@ -1496,3 +1497,38 @@
 
 	$config['use_favela_wordfilters'] = true;
 	$config['use_favela_filters'] = true;
+
+
+	$config['stylesheets']['Favela'] = 'favela.css';
+	$config['stylesheets']['Yotsuba B'] = ''; // Default; there is no additional/custom stylesheet for this.
+	$config['stylesheets']['Yotsuba'] = 'yotsuba.css';
+	$config['stylesheets']['Futaba'] = 'futaba.css';
+	$config['stylesheets']['Dark'] = 'dark.css';
+	$config['stylesheets']['Festaduro'] = 'festaduro.css';
+	$config['stylesheets']['Cotas'] = 'cotas.css';
+	$config['stylesheets']['Burichan'] = 'burichan.css';
+	$config['stylesheets']['Jj'] = 'jj.css';
+	$config['stylesheets']['Nigrachan'] = 'nigrachan.css';
+	$config['stylesheets']['Novo Jungle'] = 'novo_jungle.css';
+	$config['stylesheets']['Confraria'] = 'confraria.css';
+	$config['stylesheets']['Dark Roach'] = 'dark_roach.css';
+	$config['stylesheets']['Ferus'] = 'ferus.css';
+	$config['stylesheets']['Futaba+vichan'] = 'futaba+vichan.css';
+	$config['stylesheets']['Futaba Light'] = 'futaba-light.css';
+	$config['stylesheets']['Gentoochan'] = 'gentoochan.css';
+	$config['stylesheets']['Jungle'] = 'jungle.css';
+	$config['stylesheets']['Luna'] = 'luna.css';
+	$config['stylesheets']['Miku'] = 'miku.css';
+	$config['stylesheets']['Notsuba'] = 'notsuba.css';
+	$config['stylesheets']['Photon'] = 'photon.css';
+	$config['stylesheets']['Piwnichan'] = 'piwnichan.css';
+	$config['stylesheets']['Ricechan'] = 'ricechan.css';
+	$config['stylesheets']['Roach'] = 'roach.css';
+	$config['stylesheets']['Stripes'] = 'stripes.css';
+	$config['stylesheets']['szalet'] = 'szalet.css';
+	$config['stylesheets']['Terminal 2'] = 'terminal2.css';
+	$config['stylesheets']['Testorange'] = 'testorange.css';
+	$config['stylesheets']['Wasabi'] = 'wasabi.css';
+
+	// The default stylesheet to use.
+	$config['default_stylesheet'] = array('Favela', $config['stylesheets']['Favela']);
