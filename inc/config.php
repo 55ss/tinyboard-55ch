@@ -1500,6 +1500,8 @@
 	$config['use_favela_wordfilters'] = true;
 	$config['use_favela_filters'] = true;
 
+	$config['filenameclick_expand_new'] = true;
+
 
 	$config['stylesheets']['Favela'] = 'favela.css';
 	$config['stylesheets']['Yotsuba B'] = ''; // Default; there is no additional/custom stylesheet for this.
