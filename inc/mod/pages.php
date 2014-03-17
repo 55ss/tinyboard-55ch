@@ -282,6 +282,101 @@ function mod_page_search_it() {
 	));
 }
 
+//favela
+function mod_page_search_ip() {
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['search_ip']))
+		error($config['error']['noaccess']);
+
+	if (isset($_POST['input_ip']) && strlen($_POST['input_ip'])>0) {
+		mod_do_search_ip();
+	} else {
+		$mod_boards = array();
+		$boards = listBoards();
+
+		//if not all boards
+		if ($mod['boards'][0]!='*') {
+			foreach ($boards as $board) {
+				if (in_array($board['uri'], $mod['boards']))
+					$mod_boards[] = $board;
+			}
+		} else {
+			$mod_boards = $boards;
+		}
+
+		mod_page(_('Search IP'), 'mod/search_ip_results.html', array(
+			'use_bootstrap'	=> true,
+			'boards' => $mod_boards
+		));
+	}
+
+}
+
+//favela
+function mod_do_search_ip(){
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['search_ip']))
+		error($config['error']['noaccess']);
+
+	if (isset($_POST['input_ip']) && strlen($_POST['input_ip'])<7)
+		error(sprintf($config['error']['invalidfield'], 'IP'));
+	
+	if ($valid_ip = filter_var($_POST['input_ip'], FILTER_VALIDATE_IP)) {
+		if (count($_POST['check_boards']) == 0)
+			error($config['error']['bot']);
+	} else {
+		error(sprintf($config['error']['invalidfield'], 'IP'));
+	}
+	// SELECT * FROM (SELECT 'b' as tablename, posts_b.* FROM posts_b
+	// UNION
+	// SELECT 'ç' as tablename, posts_ç.* FROM posts_ç) AS oi
+	// ORDER BY oi.time DESC
+
+	// passou por todos os testes, bora fazer essa busca então
+	$results = array();
+	$boards = $_POST['check_boards'];
+	$query = 'SELECT * FROM (';
+	$query.= 'SELECT '."'".$boards[0]."' AS tablename".', ``posts_'.$boards[0].'``.* FROM ``posts_'.$boards[0].'`` WHERE ``posts_'.$boards[0]."``.`ip` = '".$valid_ip."'";
+
+	for ($i = 1; $i < count($boards); $i++) {
+		$query.= ' UNION SELECT '."'".$boards[$i]."' AS tablename".', ``posts_'.$boards[$i].'``.* FROM ``posts_'.$boards[$i].'`` WHERE ``posts_'.$boards[$i].'``.`ip` = '."'$valid_ip'";
+	}
+
+	$query.= ') AS ``oi``';
+	//$query.= ' WHERE ``oi``.`ip` = '."'$valid_ip'";
+	$query.= ' ORDER BY ``oi``.`time` DESC';
+
+	// Execute SQL query
+	$q = query($query) or error(db_error());
+	$results = $q->fetchAll(PDO::FETCH_ASSOC);
+	
+	$q = query("SELECT COUNT(*) FROM ($query) AS `tmp_table`") or error(db_error());
+	$result_count = $q->fetchColumn();
+
+	$mod_boards = array();
+	$boards = listBoards();
+
+	//if not all boards
+	if ($mod['boards'][0]!='*') {
+		foreach ($boards as $board) {
+			if (in_array($board['uri'], $mod['boards']))
+				$mod_boards[] = $board;
+		}
+	} else {
+		$mod_boards = $boards;
+	}
+
+	mod_page(_('Search IP'), 'mod/search_ip_results.html', array(
+		'boards' 		=> $mod_boards,
+		'results' 		=> $results,
+		'result_count'	=> $result_count,
+		'use_bootstrap'	=> true,
+		'config'	=> $config
+	));
+}
+
 function mod_search_redirect() {
 	global $config;
 	

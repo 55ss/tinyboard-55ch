@@ -1465,3 +1465,26 @@
 	// is the absolute maximum, because MySQL cannot handle table names greater than 64 characters.
 	$config['board_regex'] = '[0-9a-zA-Z$_\x{0080}-\x{FFFF}]{1,58}';
 
+
+
+/*
+ * ====================
+ *  Defaults for 55ch
+ * ====================
+ */
+	// Only admins can post to the noticeboard
+	$config['mod']['noticeboard_post'] = ADMIN;
+	// View the search IP page - Only MODS and ADMINS
+	$config['mod']['search_ip'] = MOD;
+
+
+	$config['additional_javascript'] = array();
+	$config['additional_javascript'][] = 'js/jquery.min.js';
+
+
+	// Make stylesheet selections board-specific.
+	$config['stylesheets_board'] = true;
+
+
+	// $config['use_bootstrap'] = true;
+	$config['bootstrap_stylesheet'] = 'bootstrap.min.css';
