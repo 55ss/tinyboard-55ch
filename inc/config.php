@@ -1480,6 +1480,8 @@
 	$config['mod']['wordfilters'] = ADMIN;
 	// View the filters page
 	$config['mod']['filters'] = ADMIN;
+	// View the recent posts page
+	$config['mod']['recent'] = MOD;
 
 
 	$config['additional_javascript'] = array();

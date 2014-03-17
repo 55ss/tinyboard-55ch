@@ -66,6 +66,8 @@ $pages = array(
 	'/bans'					=> 'secure_POST bans',		// ban list
 	'/bans/(\d+)'				=> 'secure_POST bans',		// ban list
 	'/ban-appeals'				=> 'secure_POST ban_appeals',	// view ban appeals
+
+	'/recent/(\d+)'					=> 'recent_posts',		// view recent posts
 	
 	'/wordfilters'				=> 'secure_POST wordfilters',
 	'/wordfilters/delete/(\%b)/(\d+)'	=> 'wordfilters_delete',
