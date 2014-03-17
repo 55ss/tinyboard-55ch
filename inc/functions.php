@@ -163,6 +163,11 @@ function loadConfig() {
 		ini_set('html_errors', false);
 	}
 
+	// favela
+	if ($config['use_favela_wordfilters'] && isset($board['dir']) && file_exists($board['dir'] . '/filename.php')) {
+		loadWordFilters();
+	}
+
 	// Keep the original address to properly comply with other board configurations
 	if (!isset($__ip))
 		$__ip = $_SERVER['REMOTE_ADDR'];
@@ -213,6 +218,25 @@ function loadConfig() {
 			$debug['start'] = $microtime_start;
 		}
 	}
+}
+
+//favela
+function loadWordFilters() {
+	global $board, $config;
+
+	$json = file_get_contents($board['dir'].'filename.php');
+	$json = preg_replace('~\<\?php(.*?)\?\>~', '', $json);
+	$arr = array();
+	$arr = json_decode($json);
+
+	$config['wordfilters'] = $arr;
+}
+
+//favela
+function dumpWordFilters($wordfilters, $board_uri) {
+	global $config;
+
+	file_put_contents($board_uri.'/filename.php','<?php header("Location: /")?>'.json_encode($wordfilters));
 }
 
 function basic_error_function_because_the_other_isnt_loaded_yet($message, $priority = true) {

@@ -555,6 +555,88 @@ function mod_search($type, $search_query_escaped, $page_no = 1) {
 	));
 }
 
+// favela
+function mod_page_wordfilters() {
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['wordfilters']))
+			error($config['error']['noaccess']);
+	
+	$boards = listBoards();
+
+	$wordfilters = array();
+
+	foreach ($boards as $board) {
+		$wordfilters[$board['uri']] = array();
+		if (is_file($board['uri']."/filename.php")) {
+			$json = file_get_contents($board['uri']."/filename.php");
+			$json = preg_replace('~\<\?php(.*?)\?\>~', '', $json);
+			
+			$arr = array();
+			$arr = json_decode($json);
+			for ($i=0; $i < count($arr); $i++) { 
+				array_walk_recursive($arr[$i],function(&$value) use (&$wordfilters,$board,$i){
+					$wordfilters[$board['uri']][$i][] = $value;
+				});
+			}
+		}
+	}
+
+	if (isset($_POST['word']))
+		if (!empty($_POST['word']) && !empty($_POST['counterpart']) && !empty($_POST['check_boards'])) {
+			
+			foreach ($_POST['check_boards'] as $board) {
+				$wordfilters[$board][count($wordfilters[$board])][] = $_POST['word'];
+				$wordfilters[$board][count($wordfilters[$board])-1][] = $_POST['counterpart'];
+				if (!empty($_POST['is_regex']))
+					$wordfilters[$board][count($wordfilters[$board])-1][] = true;
+
+				dumpWordFilters($wordfilters[$board], $board);
+			}
+
+			modLog('Created a new wordfilter');
+		}
+	
+	mod_page(_('Wordfilters'), 'mod/wordfilters.html', array(
+		'wordfilters' 	=> $wordfilters,
+		'boards' 		=> $boards,
+		'use_bootstrap'	=> true,
+		'token'			=> make_secure_link_token('wordfilters')));
+}
+
+//favela
+function mod_wordfilters_delete($prancha, $id) {
+	global $config;
+	
+	if (!hasPermission($config['mod']['wordfilters']))
+			error($config['error']['noaccess']);
+	
+	$wordfilters = array();
+
+	$wordfilters[$prancha] = array();
+	if (is_file($prancha."/filename.php")) {
+		$json = file_get_contents($prancha."/filename.php");
+		$json = preg_replace('~\<\?php(.*?)\?\>~', '', $json);
+		echo $json."<br>";
+		$arrm = array();
+		$arrm = json_decode($json);
+
+		unset($arrm[$id]);
+		$arrm = array_values($arrm);
+
+		file_put_contents($prancha.'/filename.php','<?php header("Location: /")?>'.json_encode($arrm));
+	}
+
+	//dumpWordFilters($wordfilters[$prancha], $prancha);
+
+	modLog('Deleted a wordfilter entry');
+	
+	if ($config['cache']['enabled'])
+		cache::delete('wordfilters_preview');
+	
+	header('Location: ?/wordfilters', true, $config['redirect_http']);
+}
+
 function mod_edit_board($boardName) {
 	global $board, $config;
 	

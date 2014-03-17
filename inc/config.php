@@ -1476,6 +1476,8 @@
 	$config['mod']['noticeboard_post'] = ADMIN;
 	// View the search IP page - Only MODS and ADMINS
 	$config['mod']['search_ip'] = MOD;
+	// View the wordfilters page
+	$config['mod']['wordfilters'] = ADMIN;
 
 
 	$config['additional_javascript'] = array();
@@ -1488,3 +1490,6 @@
 
 	// $config['use_bootstrap'] = true;
 	$config['bootstrap_stylesheet'] = 'bootstrap.min.css';
+
+
+	$config['use_favela_wordfilters'] = true;

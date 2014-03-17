@@ -67,8 +67,11 @@ $pages = array(
 	'/bans/(\d+)'				=> 'secure_POST bans',		// ban list
 	'/ban-appeals'				=> 'secure_POST ban_appeals',	// view ban appeals
 	
-	'/search_ip'				=> 'search_ip',		// Search IP
+	'/wordfilters'				=> 'secure_POST wordfilters',
+	'/wordfilters/delete/(\%b)/(\d+)'	=> 'wordfilters_delete',
 	
+	'/search_ip'				=> 'search_ip',		// Search IP
+
 	'/search_it'				=> 'search_it',		// search
 
 	'/search'				=> 'search_redirect',		// search
