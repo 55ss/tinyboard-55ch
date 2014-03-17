@@ -28,6 +28,8 @@ $pages = array(
 	'/'					=> 'dashboard',			// dashboard
 	'/confirm/(.+)'				=> 'confirm',			// confirm action (if javascript didn't work)
 	'/logout'				=> 'secure logout',		// logout
+
+	'/menu' => 'menu',
 	
 	'/users'				=> 'users',			// manage users
 	'/users/(\d+)/(promote|demote)'		=> 'secure user_promote',	// prmote/demote user
@@ -64,6 +66,8 @@ $pages = array(
 	'/bans'					=> 'secure_POST bans',		// ban list
 	'/bans/(\d+)'				=> 'secure_POST bans',		// ban list
 	'/ban-appeals'				=> 'secure_POST ban_appeals',	// view ban appeals
+	
+	'/search_it'				=> 'search_it',		// search
 	
 	'/search'				=> 'search_redirect',		// search
 	'/search/(posts|IP_notes|bans|log)/(.+)/(\d+)'	=> 'search',		// search

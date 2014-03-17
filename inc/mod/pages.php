@@ -9,13 +9,15 @@ defined('TINYBOARD') or exit;
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
 	
-	echo Element('page.html', array(
+	echo Element('modpage.html', array(
 		'config' => $config,
 		'mod' => $mod,
-		'hide_dashboard_link' => $template == 'mod/dashboard.html',
+		'hide_dashboard_link' => true,
 		'title' => $title,
 		'subtitle' => $subtitle,
-		'nojavascript' => true,
+		'nojavascript' => false,
+		'use_bootstrap' => (isset($args['use_bootstrap']))? $args['use_bootstrap'] : false,
+		'is_recent_posts' => (isset($args['is_recent_posts']))? $args['is_recent_posts'] : false,
 		'body' => Element($template,
 				array_merge(
 					array('config' => $config, 'mod' => $mod), 
@@ -159,7 +161,125 @@ function mod_dashboard() {
 	
 	$args['logout_token'] = make_secure_link_token('logout');
 	
-	mod_page(_('Dashboard'), 'mod/dashboard.html', $args);
+	// mod_page(_('Dashboard'), 'mod/dashboard.html', $args);
+	// Aqui começa a baixaria
+	echo Element('mod/mod_frames.html', array(
+		'config' => $config,
+		'mod' => $mod,
+		'hide_dashboard_link' => true,
+		'title' => _('Dashboard'),
+		'subtitle' => false,
+		'nojavascript' => true,
+		'body' => Element('mod/dashboard.html',
+				array_merge(
+					array('config' => $config, 'mod' => $mod), 
+					$args
+				)
+			)
+		)
+	);
+}
+
+function mod_page_menu() {
+	global $config, $mod;
+	
+	$args = array();
+	
+	$args['boards'] = listBoards();
+	
+	if (hasPermission($config['mod']['noticeboard'])) {
+		if (!$config['cache']['enabled'] || !$args['noticeboard'] = cache::get('noticeboard_preview')) {
+			$query = prepare("SELECT ``noticeboard``.*, `username` FROM ``noticeboard`` LEFT JOIN ``mods`` ON ``mods``.`id` = `mod` ORDER BY `id` DESC LIMIT :limit");
+			$query->bindValue(':limit', $config['mod']['noticeboard_dashboard'], PDO::PARAM_INT);
+			$query->execute() or error(db_error($query));
+			$args['noticeboard'] = $query->fetchAll(PDO::FETCH_ASSOC);
+			
+			if ($config['cache']['enabled'])
+				cache::set('noticeboard_preview', $args['noticeboard']);
+		}
+	}
+	
+	if (!$config['cache']['enabled'] || ($args['unread_pms'] = cache::get('pm_unreadcount_' . $mod['id'])) === false) {
+		$query = prepare('SELECT COUNT(*) FROM ``pms`` WHERE `to` = :id AND `unread` = 1');
+		$query->bindValue(':id', $mod['id']);
+		$query->execute() or error(db_error($query));
+		$args['unread_pms'] = $query->fetchColumn();
+		
+		if ($config['cache']['enabled'])
+			cache::set('pm_unreadcount_' . $mod['id'], $args['unread_pms']);
+	}
+	
+	$query = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
+	$args['reports'] = $query->fetchColumn();
+	
+	if ($mod['type'] >= ADMIN && $config['check_updates']) {
+		if (!$config['version'])
+			error(_('Could not find current version! (Check .installed)'));
+		
+		if (isset($_COOKIE['update'])) {
+			$latest = unserialize($_COOKIE['update']);
+		} else {
+			$ctx = stream_context_create(array('http' => array('timeout' => 5)));
+			if ($code = @file_get_contents('http://tinyboard.org/version.txt', 0, $ctx)) {
+				$ver = strtok($code, "\n");
+				
+				if (preg_match('@^// v(\d+)\.(\d+)\.(\d+)\s*?$@', $ver, $matches)) {
+					$latest = array(
+						'massive' => $matches[1],
+						'major' => $matches[2],
+						'minor' => $matches[3]
+					);
+					if (preg_match('/v(\d+)\.(\d)\.(\d+)(-dev.+)?$/', $config['version'], $matches)) {
+						$current = array(
+							'massive' => (int) $matches[1],
+							'major' => (int) $matches[2],
+							'minor' => (int) $matches[3]
+						);
+						if (isset($m[4])) { 
+							// Development versions are always ahead in the versioning numbers
+							$current['minor'] --;
+						}
+						// Check if it's newer
+						if (!(	$latest['massive'] > $current['massive'] ||
+							$latest['major'] > $current['major'] ||
+								($latest['massive'] == $current['massive'] &&
+									$latest['major'] == $current['major'] &&
+									$latest['minor'] > $current['minor']
+								)))
+							$latest = false;
+					} else {
+						$latest = false;
+					}
+				} else {
+					// Couldn't get latest version
+					$latest = false;
+				}
+			} else {
+				// Couldn't get latest version
+				$latest = false;
+			}
+	
+			setcookie('update', serialize($latest), time() + $config['check_updates_time'], $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, false, true);
+		}
+		
+		if ($latest)
+			$args['newer_release'] = $latest;
+	}
+	
+	$args['logout_token'] = make_secure_link_token('logout');
+	
+	mod_page(_('Dashboard'), 'mod/dashboard_framed.html', $args);
+}
+
+// favela
+function mod_page_search_it() {
+	mod_page(_('Search results'), 'mod/search_results.html', array(
+		'search_type' => '',
+		'search_query' => '',
+		'search_query_escaped' => '',
+		'result_count' => '',
+		'results' => ''
+	));
 }
 
 function mod_search_redirect() {
