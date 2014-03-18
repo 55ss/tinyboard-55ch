@@ -1483,11 +1483,28 @@
 	// View the recent posts page
 	$config['mod']['recent'] = MOD;
 
+	$config['api']['enabled'] = true;
 
 	$config['additional_javascript'] = array();
 	$config['additional_javascript'][] = 'js/jquery.min.js';
 	$config['additional_javascript'][] = 'js/style-select.js';
-
+	$config['additional_javascript'][] = 'js/expand.js';
+	$config['additional_javascript'][] = 'js/hide-images.js';
+	$config['additional_javascript'][] = 'js/hide-threads.js';
+	$config['additional_javascript'][] = 'js/quick-post-controls.js';
+	$config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
+    $config['additional_javascript'][] = 'js/quick-reply.js';
+	$config['additional_javascript'][] = 'js/toggle-images.js';
+	$config['additional_javascript'][] = 'js/post-hover.js'; // must come before show-backlinks.js
+	$config['additional_javascript'][] = 'js/show-backlinks.js';
+	$config['additional_javascript'][] = 'js/inline-expanding.js';
+	$config['additional_javascript'][] = 'js/expand-all-images.js';
+	$config['additional_javascript'][] = 'js/catalog-link.js';
+    $config['additional_javascript'][] = 'js/show-op.js';
+	$config['additional_javascript'][] = 'js/mobile-style.js';
+	$config['additional_javascript'][] = 'js/titlebar-notifications.js';
+	$config['additional_javascript'][] = 'js/auto-reload.js';
+	$config['additional_javascript'][] = 'js/watch.js';
 
 	// Make stylesheet selections board-specific.
 	$config['stylesheets_board'] = true;
