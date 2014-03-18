@@ -1627,3 +1627,8 @@
 		array('$', 'fit', 'pfiu', 'vs'),
 		array('vi' => 'http://www.vichan.net/', 'br' => 'http://55ch.org/', 'int' => 'http://int.vichan.net/', 'pl' => 'http://pl.vichan.net/', 'au' => 'http://au.vichan.net/')
 	);
+
+	$config['categories'] = array(
+		'VIP' => array('a', 'b', 'd', 'mod', 'cri', 'c'),
+		'Mídia' => array('an', 'lit', 'mu', 'tv', 'jo', 'lan')
+	);
