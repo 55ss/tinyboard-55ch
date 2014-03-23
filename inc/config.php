@@ -1667,3 +1667,13 @@
 	$config['markup'][] = array("/\[b\](.+?)\[\/b\]/", "<strong>\$1</strong>");
 	$config['markup'][] = array("/\[\i\](.+?)\[\/i\]/", "<em>\$1</em>");
 	$config['markup'][] = array("/\[spoiler\](.+?)\[\/spoiler\]/", "<span class=\"spoiler\">\$1</span>");
+
+	// Optional banner image at the top of every page.
+	$config['url_banner'] = $config['root'].'banners/banners.php';
+	// Banner dimensions are also optional. As the banner loads after the rest of the page, everything may be
+	// shifted down a few pixels when it does. Making the banner a fixed size will prevent this.
+	$config['banner_width'] = 300;
+	$config['banner_height'] = 100;
+
+	// 55chan's ads
+	$config['global_message'] = '<iframe data-aa="5214" src="//ad.a-ads.com/5214?size=320x50" scrolling="no" style="width:320px; height:50px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe><iframe data-aa="5214" src="//ad.a-ads.com/5214?size=320x50" scrolling="no" style="width:320px; height:50px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe><iframe data-aa="5214" src="//ad.a-ads.com/5214?size=320x50" scrolling="no" style="width:320px; height:50px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>';
