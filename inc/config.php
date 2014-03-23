@@ -1632,3 +1632,38 @@
 		'VIP' => array('a', 'b', 'd', 'mod', 'cri', 'c'),
 		'Mídia' => array('an', 'lit', 'mu', 'tv', 'jo', 'lan')
 	);
+
+	// capcodes
+	// "## Custom" becomes lightgreen, italic and bold:
+	$config['custom_capcode']['Custom'] ='<span class="capcode" style="color:lightgreen;font-style:italic;font-weight:bold"> ## %s</span>';
+
+	// "## Admin" makes everything purple, including the name and tripcode:
+	$config['custom_capcode']['Admin'] = array(
+		'<span class="capcode" style="color:purple"> ## %s</span>',
+		'color:purple', // Change name style; optional
+		'color:purple' // Change tripcode style; optional
+	);
+
+	// "## Mod" makes everything red and bold, including the name and tripcode:
+	$config['custom_capcode']['Mod'] = array(
+		'<span class="capcode" style="color:red;font-weight:bold"> ## %s</span>',
+		'color:red;font-weight:bold', // Change name style; optional
+		'color:red;font-weight:bold' // Change tripcode style; optional
+	);
+
+	// The default name (ie. Anonymous).
+	$config['anonymous'] = 'Anônimo';
+
+	// When true, users are instead presented a selectbox for email. Contains, blank, noko and sage.
+	$config['field_email_selectbox'] = true;
+
+	// Display image identification links using regex.info/exif, TinEye and Google Images.
+	$config['image_identification'] = true;
+
+	// When true, all names will be set to $config['anonymous']. Exceto na área de administração.
+	$config['field_disable_name'] = true;
+
+	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
+	$config['markup'][] = array("/\[b\](.+?)\[\/b\]/", "<strong>\$1</strong>");
+	$config['markup'][] = array("/\[\i\](.+?)\[\/i\]/", "<em>\$1</em>");
+	$config['markup'][] = array("/\[spoiler\](.+?)\[\/spoiler\]/", "<span class=\"spoiler\">\$1</span>");
