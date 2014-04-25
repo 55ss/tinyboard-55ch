@@ -196,7 +196,10 @@ $(document).ready(function() {
 	// checa se o tempo de ban for selecionado pelo dropdown
 	var duration = sessionStorage.getItem('ban-duration');
 	if (duration) {
-		$('input#length').val(duration);
+		duration = duration.split('|');
+		
+		$('textarea#reason').val(duration[1]);
+		$('input#length').val(duration[0]);
 		sessionStorage.removeItem('ban-duration');
 	}
 	
@@ -220,7 +223,7 @@ $(document).ready(function() {
 			}
 			else {
 				$.each(data, function(k, v) {
-					$('select#ban_duration').append('<option value="'+ k +'">'+ v +'</option>');
+					$('select#ban_duration').append('<option value="'+ k +'|'+ v +'">'+ k + ' - ' + v +'</option>');
 				});
 			}
 		});
