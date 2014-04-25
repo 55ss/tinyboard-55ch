@@ -170,3 +170,71 @@ onready(function(){
 	});
 });
 
+
+/**
+ * Na tela de ban, mostrar bans anteriores, ou ao menos um botão pra search IP;
+ * Identificar automaticamente a board de origem do post a ser banido;
+ * Duração do ban pode vir setada pelo dropdown no [B] via sessionStorage;
+ * @author ss
+ */
+$(document).ready(function() {
+	var parts  = window.location.search.replace('?','').split('/');
+	var board  = parts[1];
+	var action = parts[2];
+	var pid    = parts[3];
+	
+	if (action == 'ban') {
+		// seleciona board certa para o ban
+		$('input#ban-board-'+ board).prop('checked', true)
+		
+		// adiciona link para Search IP
+		var ip = $('input#ip').val();
+		$('input#ip').after('[<a href="?/IP/'+ip+'">Search IP</a>]');
+	}
+	
+	
+	// checa se o tempo de ban for selecionado pelo dropdown
+	var duration = sessionStorage.getItem('ban-duration');
+	if (duration) {
+		$('input#length').val(duration);
+		sessionStorage.removeItem('ban-duration');
+	}
+	
+	
+	// fornece o dropdown para escolha do tempo de ban
+	var btn_ban     = $('span.controls.op').find('a').get(3);
+	var btn_ban_del = $('span.controls.op').find('a').get(4);
+	
+	function _handlerBanButton() {
+		var $this    = $(this);
+		var next_url = $this.prop('href');
+		var select_html = ['<select id="ban_duration">','<option value="">Duração do ban</option>','</select>'];
+		
+		$('select#ban_duration').remove();
+		$this.after(select_html.join(''));
+		
+		// PS: se a sintaxe do json estiver com problema, falha silenciosamente
+		$.getJSON('js/config-bans.json', function(data) {
+			if (! data) {
+				$('select#ban_duration').append('<option value="">indefinido</option>');
+			}
+			else {
+				$.each(data, function(k, v) {
+					$('select#ban_duration').append('<option value="'+ k +'">'+ v +'</option>');
+				});
+			}
+		});
+		
+		$('select#ban_duration').change(function() {
+			var $this = $(this);
+			sessionStorage.setItem('ban-duration', $this.val());
+			
+			window.location = next_url;
+		});
+		
+		return false;
+	}
+	
+	$(btn_ban).click(_handlerBanButton);
+	$(btn_ban_del).click(_handlerBanButton);
+});
