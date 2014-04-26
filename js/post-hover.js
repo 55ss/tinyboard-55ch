@@ -205,39 +205,42 @@ $(document).ready(function() {
 	
 	
 	// fornece o dropdown para escolha do tempo de ban
-	var btn_ban     = $('span.controls.op').find('a').get(3);
-	var btn_ban_del = $('span.controls.op').find('a').get(4);
 	
-	function _handlerBanButton() {
-		var $this    = $(this);
-		var next_url = $this.prop('href');
-		var select_html = ['<select id="ban_duration">','<option value="">Duração do ban</option>','</select>'];
+	$('span.controls').each(function(i, el) {
+		var btn_ban     = $(el).find('a').get(3);
+		var btn_ban_del = $(el).find('a').get(4);
 		
-		$('select#ban_duration').remove();
-		$this.after(select_html.join(''));
-		
-		// PS: se a sintaxe do json estiver com problema, falha silenciosamente
-		$.getJSON('js/config-bans.json', function(data) {
-			if (! data) {
-				$('select#ban_duration').append('<option value="">indefinido</option>');
-			}
-			else {
-				$.each(data, function(k, v) {
-					$('select#ban_duration').append('<option value="'+ k +'|'+ v +'">'+ k + ' - ' + v +'</option>');
-				});
-			}
-		});
-		
-		$('select#ban_duration').change(function() {
-			var $this = $(this);
-			sessionStorage.setItem('ban-duration', $this.val());
+		function _handlerBanButton() {
+			var $this    = $(this);
+			var next_url = $this.prop('href');
+			var select_html = ['<select id="ban_duration">','<option value="">Duração do ban</option>','</select>'];
 			
-			window.location = next_url;
-		});
+			$('select#ban_duration').remove();
+			$this.after(select_html.join(''));
+			
+			// PS: se a sintaxe do json estiver com problema, falha silenciosamente
+			$.getJSON('js/config-bans.json', function(data) {
+				if (! data) {
+					$('select#ban_duration').append('<option value="">indefinido</option>');
+				}
+				else {
+					$.each(data, function(k, v) {
+						$('select#ban_duration').append('<option value="'+ k +'|'+ v +'">'+ k + ' - ' + v +'</option>');
+					});
+				}
+			});
+			
+			$('select#ban_duration').change(function() {
+				var $this = $(this);
+				sessionStorage.setItem('ban-duration', $this.val());
+				
+				window.location = next_url;
+			});
+			
+			return false;
+		}
 		
-		return false;
-	}
-	
-	$(btn_ban).click(_handlerBanButton);
-	$(btn_ban_del).click(_handlerBanButton);
+		$(btn_ban).click(_handlerBanButton);
+		$(btn_ban_del).click(_handlerBanButton);
+	});
 });
